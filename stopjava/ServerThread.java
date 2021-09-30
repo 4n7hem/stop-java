@@ -14,6 +14,7 @@ public class ServerThread extends Thread {
         try{ 
             this.in = new BufferedReader(new InputStreamReader (socket.getInputStream()));
             this.out = new PrintWriter(socket.getOutputStream(), true);
+            System.out.println("Conexao feita: " + socket.toString());
         }
         catch(IOException e){
             e.printStackTrace();
@@ -29,12 +30,18 @@ public class ServerThread extends Thread {
                     out.println("Pong");
                     break;
                 }
-                socket.close();
+                
             }
             catch(IOException e){
                 System.out.println(e.getMessage() + ": " + socket.getPort());
                 break;           
             }
+        }
+        try{
+            socket.close();
         } 
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }        
     }
 }
