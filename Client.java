@@ -34,7 +34,7 @@ public class Client {
                 }
                 if((servidorResposta = this.input.readLine()) != null){
                     System.out.println("Server: "+ servidorResposta);
-                }
+                }                
             }
         }
         catch(Exception e){
