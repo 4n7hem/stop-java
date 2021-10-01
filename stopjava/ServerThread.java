@@ -21,6 +21,7 @@ public class ServerThread extends Thread {
     }
     
     public void run(){
+        System.out.println("ServerThread.run()");
         while(true){
             try{
                 String inputLine;

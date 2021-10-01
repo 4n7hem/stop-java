@@ -15,6 +15,7 @@ public class Server{
             System.out.println("Servidor iniciado na porta 8081.");
         }
         catch(Exception e){
+            System.out.println("ERRO");
             System.out.println(e.getMessage());
         }
     }

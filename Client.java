@@ -23,7 +23,8 @@ public class Client {
 
     public void write(){
         while(true){        
-        try{            
+        try{
+            
             String servidorResposta; 
             String inputUsuario;      
             while(true){
@@ -57,7 +58,7 @@ public class Client {
     
     private int porta(){
 
-                System.out.println("Diga a porta: ");
+        System.out.println("Diga a porta: ");
         try{
             return Integer.parseInt(inputConfig.readLine());
         }        
@@ -66,6 +67,8 @@ public class Client {
         }
         return 8080;
     }
+    
+    
 
     public static void main(String[] args){
         Client cliente = new Client();
