@@ -1,9 +1,8 @@
 package stopjava;
-
 import java.net.*;
 import java.io.*;
 
-public class ServerThread extends Thread {
+public class ServerThread extends Thread implements Runnable{
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
@@ -11,38 +10,49 @@ public class ServerThread extends Thread {
     public ServerThread(Socket socket){
         super("ServerThread");
         this.socket = socket;
-        try{ 
+        try{
             this.in = new BufferedReader(new InputStreamReader (socket.getInputStream()));
             this.out = new PrintWriter(socket.getOutputStream(), true);
-            System.out.println("Conexao feita: " + socket.toString());
+            System.out.println("Conexao feita: " + socket.getPort());
         }
         catch(IOException e){
             e.printStackTrace();
-        }        
+        }
     }
-    
+
+    public void clientMessage(String text){
+      out.println(text);
+    }
+
     public void run(){
-        System.out.println("ServerThread.run()");
-        while(true){
+        // while(true){
             try{
                 String inputLine;
-                while((inputLine = in.readLine()) != null){
-                    System.out.println("Mensagem recebida.");
-                    out.println("Pong");
-                    break;
+                while(!(inputLine = in.readLine()).equalsIgnoreCase("exit")){
+                    System.out.println("Mensagem recebida: "+inputLine);
+                    out.println(inputLine.toString().length());
+                    //break;
                 }
-                
             }
             catch(IOException e){
-                System.out.println(e.getMessage() + ": " + socket.getPort());
-                break;           
+                e.printStackTrace();
+                //break;
             }
-        }
-        try{
-            socket.close();
-        } 
-        catch(IOException e){
-            System.out.println(e.getMessage());
-        }        
+        //}
+        finally {
+  				try {
+  					if (out != null) {
+              System.out.println("Conexao com "+socket.getPort()+" encerrada.");
+  						out.close();
+  					}
+  					if (in != null) {
+  						in.close();
+  						socket.close();
+  					}
+  				}
+  				catch (IOException e) {
+  					e.printStackTrace();
+  				}
+  			}
     }
 }

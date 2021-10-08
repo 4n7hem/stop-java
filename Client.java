@@ -1,6 +1,8 @@
 
 import java.io.*;
-import java.net.Socket;
+import java.net.*;
+import java.util.*;
+
 
 public class Client {
 
@@ -8,6 +10,9 @@ public class Client {
     private BufferedReader input;
     private PrintWriter output;
     private BufferedReader inputConfig;
+    private InterfaceCli Cli;
+    private Scanner sc = new Scanner(System.in);
+    private String line = null;
 
     public Client(){
         try{
@@ -22,54 +27,49 @@ public class Client {
     }
 
     public void write(){
-        while(true){        
-        try{
-            
-            String servidorResposta; 
-            String inputUsuario;      
-            while(true){
-                inputUsuario = inputConfig.readLine();
-                if(inputUsuario != null){
-                    output.print(inputUsuario);
-                }
-                if((servidorResposta = this.input.readLine()) != null){
-                    System.out.println("Server: "+ servidorResposta);
-                }                
-            }
+      try{
+        while(!"exit".equalsIgnoreCase(line)){
+
+              line = sc.nextLine();
+              output.println(line);
+      				output.flush();
+              String answerServer = input.readLine();
+
+              if(answerServer == null)
+                System.out.println("Conexão com o server encerrada.");
+
+              else System.out.println("Server respondeu "+ answerServer);
+          }
+          sc.close();
         }
         catch(Exception e){
             System.out.println(e.getMessage());
         }
-        }
-        
     }
-    
+
     private String host(){
         System.out.println("Diga o host: ");
         try{
             return inputConfig.readLine();
-        }        
+        }
         catch(IOException e){
             System.out.println(e.getMessage());
         }
         return "";
-        
+
     }
-    
+
     private int porta(){
 
         System.out.println("Diga a porta: ");
         try{
             return Integer.parseInt(inputConfig.readLine());
-        }        
+        }
         catch(IOException e){
             System.out.println(e.getMessage());
         }
         return 8080;
     }
-    
-    
-
     public static void main(String[] args){
         Client cliente = new Client();
         cliente.write();
