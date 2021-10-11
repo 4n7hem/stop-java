@@ -1,25 +1,33 @@
 import java.util.Random;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import stopjava.Row;
 
 public class OJogo {
 
+    public final String[] categorias = {"Nome", "Animal", "Cor", "Verbo", "País", "Objeto"};
     private char letraAtual;
     private Random r = new Random();
+    private long tempoInicial;
     private HashMap<String, Integer> pontuacao = new HashMap<String,Integer>();
-    private HashMap<String, String> palavrasAtuais = new HashMap<String,String>();
+    private ArrayList<Row> palavrasAtuais;
 
     public OJogo(){
         /* Eu sou imune a essa piada, mas que vocês sofram aí. */
         System.out.println("Que os jogos comecem.");
-
+        for(String categoria : categorias){
+            palavrasAtuais.add(new Row(categoria));
+        }
     }
-
 
     /* rola o d20 */
 
     public void rerollLetra(){
-        this.letraAtual = (char) (r.nextInt(26) + 'a');
+        char letraAnterior = this.letraAtual;
+        while(letraAnterior == this.letraAtual){
+            this.letraAtual = (char) (r.nextInt(26) + 'a');
+        }        
     }
 
     /* O char da letra atual da rodada, para o servidor mandar aos clientes */
@@ -30,32 +38,18 @@ public class OJogo {
 
     /* O servidor adiciona as respostas de usuário que recebe */
 
-    public void addResposta(String user, String texto){
-        palavrasAtuais.put(user, texto);
+    public void addResposta(String user, String texto, String categoria){
+        for(Row linha : palavrasAtuais){
+            if(linha.nomeDaCategoria == categoria){
+                linha.inserirResposta(user, texto);
+                break;
+            }
+        }
     }
 
     public void calcularFrequencia(){
-        final Map<String, Integer> innerCounter = new HashMap<>(); /* isto conta frequência de palavras no palavraAtuais*/
-        for (String token : palavrasAtuais.keySet()) {             /* essa informação será passada ao protocolo abaixo */
-            if (innerCounter.containsKey(token)) {
-                int value = innerCounter.get(token);
-                innerCounter.put(token, ++value);
-            } else {
-                innerCounter.put(token, 1);
-            }
-        }
-
-        /* adicionar pontos no pontuação dado a frequência*/
-
-        for (String palavra : innerCounter.keySet()){
-           for(String nome : pontuacao.keySet()){
-               if( palavra == palavrasAtuais.get(nome)){
-                Integer pontAntiga = pontuacao.get(nome);
-                pontuacao.put(nome, Integer.sum(pontAntiga, protocoloDePontos(innerCounter.get(palavra))));
-               }
-           }
-        }
-
+       /* Com as frequencias de palavras de cada Row, passe pelo protocolo de pontos */
+        /* E adicione pontuações aos jogadores corretos em pontuação */
     }
 
     public Integer protocoloDePontos(Integer entrada){
@@ -68,4 +62,36 @@ public class OJogo {
         else return Integer.valueOf(5);
     }
     
+    public void limparRespostas(){
+        this.palavrasAtuais.clear();
+    }
+
+    public String terminarOJogo(){
+
+        Map.Entry<String,Integer> maxEntry = null;
+
+        for(Map.Entry<String, Integer> entry : pontuacao.entrySet()){
+            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0){
+                maxEntry = entry;
+            }
+        }
+        this.limparRespostas();
+        this.pontuacao.clear();
+
+        /* Vamos passar quem venceu à camada acima, para que o server possa anunciar. */
+        return "O vencedor foi: " + maxEntry.getKey();
+    }
+
+    public void startTimer(){
+        this.tempoInicial = System.currentTimeMillis();
+    }
+
+    public long checarTimer(){
+        long deltaTempo = System.currentTimeMillis() - tempoInicial;
+        return deltaTempo;
+    }
+
+    
 }
+
+
