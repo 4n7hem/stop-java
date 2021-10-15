@@ -35,15 +35,12 @@ public class Server{
       try{
         while(escutando){
             Socket client = servidor.accept();
-            System.out.println("Novo cliente "+ client.getInetAddress().getHostAddress());
-            ServerThread clientSock = new ServerThread(client);
+            System.out.println("Novo cliente "+ client.getPort());
+            ServerThread clientSock = new ServerThread(client, connected);
             new Thread(clientSock).start();
-            // System.out.println(Cli.openningGame(""));
-            // if(connected.isEmpty()) clientSock.clientMessage(Cli.openningGame("First"));
-            // else clientSock.clientMessage(Cli.openningGame(""));
-            //sendingListToClients(client, clientSock);
+            clientSock.clientMessage(client);
             connected.put(client, clientSock);
-            //for (Socket porta : connected.keySet())  System.out.print(porta.getPort() + " ");
+
         }
       }
       catch(IOException e){

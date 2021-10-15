@@ -27,27 +27,28 @@ public class ServerThread extends Thread implements Runnable{
       out.println("teste");
       connected.put(socket, serverThread);
     }
+
     boolean begin = true;
     public void run(){
-        // while(true){
+
             try{
+              while(true){
                 String inputLine;
                 while(!(inputLine = in.readLine()).equalsIgnoreCase("exit")){
                     if(inputLine.equals("ON") && begin) {
-                      out.println("=======================================\n"+
-                                  "                STOPEEE!               \n"+
-                                  "=======================================\n");
+                      out.println();
                       begin = false;
                     }
                     else System.out.println("Mensagem recebida: "+inputLine);
                     //out.println(inputLine.toString().length());
                 }
+              }
 
             }
             catch(IOException e){
                 e.printStackTrace();
             }
-        //}
+
         finally {
   				try {
   					if (out != null) {
