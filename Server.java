@@ -34,8 +34,7 @@ public class Server{
 
     public void sendingListToClients(Socket connectedSocket, ServerThread connectedThread){
       for (Socket port : connected.keySet())
-        connected.get(port).clientMessage(Integer.toString(connectedSocket.getPort()));
-
+        //connected.get(port).clientMessage(Integer.toString(connectedSocket.getPort()));
     }
 
     public void run(){
@@ -44,14 +43,14 @@ public class Server{
 
             Socket client = servidor.accept();
             System.out.println("Novo cliente "+ client.getPort());
-            ServerThread clientSock = new ServerThread(client, connected);
+            ServerThread clientSock = new ServerThread(client);
             new Thread(clientSock).start();
             clientSock.clientMessage(client);
             connected.put(client, clientSock);
 
         }
       }
-      catch(IOException e){
+      catch(Exception e){
         e.printStackTrace();
          // System.out.println(e.getMessage());
          // System.exit(-1);
