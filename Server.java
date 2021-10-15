@@ -1,14 +1,14 @@
 
 import java.io.*;
 import java.net.*;
-import stopjava.*;
+import stopjava.ServerThread;
 import java.util.*;
 
 public class Server{
 
     private ServerSocket servidor;
     private boolean escutando = true;
-    private InterfaceCli Cli = new InterfaceCli();
+    // private InterfaceCli Cli = new InterfaceCli();
     private Map<Socket, ServerThread> connected = new HashMap<Socket, ServerThread>();
 
     public Server(){
@@ -23,6 +23,7 @@ public class Server{
             System.out.println(e.getMessage());
         }
     }
+<<<<<<< HEAD
     // public int timeClassPlayer(socket ClientSock){
     //   int i = 0;
     //   for (Socket sock : connected.keySet()){
@@ -36,11 +37,19 @@ public class Server{
       for (Socket port : connected.keySet())
         //connected.get(port).clientMessage(Integer.toString(connectedSocket.getPort()));
     }
+=======
+
+    // public void sendingListToClients(Socket connectedSocket, ServerThread connectedThread){
+    //   for (Socket port : connected.keySet())
+    //     System.out.println("aaaaaaaaaa");
+    //     connected.get(port).clientMessage(connectedSocket, connectedThread);
+    // }
+>>>>>>> 59d85d713af0553089b57d6210c72dda6deadb75
 
     public void run(){
+
       try{
         while(escutando){
-
             Socket client = servidor.accept();
             System.out.println("Novo cliente "+ client.getPort());
             ServerThread clientSock = new ServerThread(client);
