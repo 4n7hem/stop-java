@@ -2,6 +2,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import stopjava.InterfaceCli;
 
 
 public class Client {
@@ -28,17 +29,18 @@ public class Client {
 
     public void write(){
       try{
-        while(!"exit".equalsIgnoreCase(line)){
 
-              line = sc.nextLine();
-              output.println(line);
+        while(!"exit".equalsIgnoreCase(line)){
+              output.println("ON");
+              //line = sc.nextLine();
+              //output.println(line);
       				output.flush();
               String answerServer = input.readLine();
 
               if(answerServer == null)
                 System.out.println("Conexão com o server encerrada.");
 
-              else System.out.println("Server respondeu "+ answerServer);
+              else System.out.println(answerServer);
           }
           sc.close();
         }

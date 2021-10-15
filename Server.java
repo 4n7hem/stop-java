@@ -1,7 +1,7 @@
 
 import java.io.*;
 import java.net.*;
-import stopjava.ServerThread;
+import stopjava.*;
 import java.util.*;
 
 public class Server{
@@ -23,6 +23,14 @@ public class Server{
             System.out.println(e.getMessage());
         }
     }
+    // public int timeClassPlayer(socket ClientSock){
+    //   int i = 0;
+    //   for (Socket sock : connected.keySet()){
+    //     i++;
+    //     if(sock.getPort() == ClientSock.getPort) break;
+    //   }
+    //   return i;
+    // }
 
     public void sendingListToClients(Socket connectedSocket, ServerThread connectedThread){
       for (Socket port : connected.keySet())
@@ -31,20 +39,14 @@ public class Server{
     }
 
     public void run(){
-
       try{
         while(escutando){
 
             Socket client = servidor.accept();
-            System.out.println("Novo cliente "+ client.getInetAddress().getHostAddress());
+            System.out.println("Novo cliente "+ client.getPort());
             ServerThread clientSock = new ServerThread(client);
             new Thread(clientSock).start();
-            System.out.println(Cli.openningGame(""));
-            if(connected.isEmpty()) clientSock.clientMessage(Cli.openningGame("First"));
-            else clientSock.clientMessage(Cli.openningGame(""));
-            //sendingListToClients(client, clientSock);
             connected.put(client, clientSock);
-            //for (Socket porta : connected.keySet())  System.out.print(porta.getPort() + " ");
         }
       }
       catch(IOException e){
