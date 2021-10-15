@@ -1,12 +1,14 @@
 package stopjava;
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 
 public class ServerThread extends Thread implements Runnable{
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
+    private Map<Socket, ServerThread> CliList = new HashMap<Socket, ServerThread>();
 
 
     public ServerThread(Socket socket){
@@ -22,30 +24,31 @@ public class ServerThread extends Thread implements Runnable{
         }
     }
 
-    public void clientMessage(String text){
-      out.println(text);
+    public void clientMessage(Socket clinew){
+
     }
+
     boolean begin = true;
     public void run(){
-        // while(true){
+
             try{
+              while(true){
                 String inputLine;
                 while(!(inputLine = in.readLine()).equalsIgnoreCase("exit")){
                     if(inputLine.equals("ON") && begin) {
-                      out.println("=======================================\n"+
-                                  "                STOPEEE!               \n"+
-                                  "=======================================\n");
+                      out.println();
                       begin = false;
                     }
                     else System.out.println("Mensagem recebida: "+inputLine);
                     //out.println(inputLine.toString().length());
                 }
+              }
 
             }
             catch(IOException e){
                 e.printStackTrace();
             }
-        //}
+
         finally {
   				try {
   					if (out != null) {

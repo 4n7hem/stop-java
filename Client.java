@@ -21,6 +21,9 @@ public class Client {
             socketCliente = new Socket(host(), porta());
             output = new PrintWriter(socketCliente.getOutputStream(), true);
             input = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+            System.out.println("=======================================\n"+
+                              "                STOPEEE!               \n"+
+                              "=======================================\n");
         }
         catch(Exception e){
             System.out.println(e.getMessage());
@@ -32,8 +35,8 @@ public class Client {
 
         while(!"exit".equalsIgnoreCase(line)){
               output.println("ON");
-              //line = sc.nextLine();
-              //output.println(line);
+              line = sc.nextLine();
+              output.println(line);
       				output.flush();
               String answerServer = input.readLine();
 

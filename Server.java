@@ -44,9 +44,11 @@ public class Server{
 
             Socket client = servidor.accept();
             System.out.println("Novo cliente "+ client.getPort());
-            ServerThread clientSock = new ServerThread(client);
+            ServerThread clientSock = new ServerThread(client, connected);
             new Thread(clientSock).start();
+            clientSock.clientMessage(client);
             connected.put(client, clientSock);
+
         }
       }
       catch(IOException e){
