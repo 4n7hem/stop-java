@@ -1,14 +1,14 @@
 
 import java.io.*;
 import java.net.*;
-import stopjava.*;
+import stopjava.ServerThread;
 import java.util.*;
 
 public class Server{
 
     private ServerSocket servidor;
     private boolean escutando = true;
-    private InterfaceCli Cli = new InterfaceCli();
+    // private InterfaceCli Cli = new InterfaceCli();
     private Map<Socket, ServerThread> connected = new HashMap<Socket, ServerThread>();
 
     public Server(){
@@ -23,30 +23,27 @@ public class Server{
             System.out.println(e.getMessage());
         }
     }
-    // public int timeClassPlayer(socket ClientSock){
-    //   int i = 0;
-    //   for (Socket sock : connected.keySet()){
-    //     i++;
-    //     if(sock.getPort() == ClientSock.getPort) break;
-    //   }
-    //   return i;
+
+    // public void sendingListToClients(Socket connectedSocket, ServerThread connectedThread){
+    //   for (Socket port : connected.keySet())
+    //     System.out.println("aaaaaaaaaa");
+    //     connected.get(port).clientMessage(connectedSocket, connectedThread);
     // }
 
-    public void sendingListToClients(Socket connectedSocket, ServerThread connectedThread){
-      for (Socket port : connected.keySet())
-        connected.get(port).clientMessage(Integer.toString(connectedSocket.getPort()));
-
-    }
-
     public void run(){
+
       try{
         while(escutando){
-
             Socket client = servidor.accept();
-            System.out.println("Novo cliente "+ client.getPort());
+            System.out.println("Novo cliente "+ client.getInetAddress().getHostAddress());
             ServerThread clientSock = new ServerThread(client);
             new Thread(clientSock).start();
+            // System.out.println(Cli.openningGame(""));
+            // if(connected.isEmpty()) clientSock.clientMessage(Cli.openningGame("First"));
+            // else clientSock.clientMessage(Cli.openningGame(""));
+            //sendingListToClients(client, clientSock);
             connected.put(client, clientSock);
+            //for (Socket porta : connected.keySet())  System.out.print(porta.getPort() + " ");
         }
       }
       catch(IOException e){
