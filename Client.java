@@ -35,8 +35,8 @@ public class Client {
 
         while(!"exit".equalsIgnoreCase(line)){
               output.println("ON");
-              line = sc.nextLine();
-              output.println(line);
+              // line = sc.nextLine();
+              // output.println(line);
       				output.flush();
               String answerServer = input.readLine();
 

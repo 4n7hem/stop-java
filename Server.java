@@ -23,28 +23,12 @@ public class Server{
             System.out.println(e.getMessage());
         }
     }
-<<<<<<< HEAD
-    // public int timeClassPlayer(socket ClientSock){
-    //   int i = 0;
-    //   for (Socket sock : connected.keySet()){
-    //     i++;
-    //     if(sock.getPort() == ClientSock.getPort) break;
-    //   }
-    //   return i;
-    // }
-
-    public void sendingListToClients(Socket connectedSocket, ServerThread connectedThread){
-      for (Socket port : connected.keySet())
-        //connected.get(port).clientMessage(Integer.toString(connectedSocket.getPort()));
-    }
-=======
 
     // public void sendingListToClients(Socket connectedSocket, ServerThread connectedThread){
     //   for (Socket port : connected.keySet())
     //     System.out.println("aaaaaaaaaa");
     //     connected.get(port).clientMessage(connectedSocket, connectedThread);
     // }
->>>>>>> 59d85d713af0553089b57d6210c72dda6deadb75
 
     public void run(){
 
@@ -52,9 +36,11 @@ public class Server{
         while(escutando){
             Socket client = servidor.accept();
             System.out.println("Novo cliente "+ client.getPort());
-            ServerThread clientSock = new ServerThread(client);
-            new Thread(clientSock).start();
+            ServerThread clientSock = new ServerThread(client, connected);
             clientSock.clientMessage(client);
+            for (ServerThread port : connected.values())
+              port.clientMessage(client);
+            new Thread(clientSock).start();
             connected.put(client, clientSock);
 
         }
