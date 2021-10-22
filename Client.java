@@ -2,7 +2,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import stopjava.InterfaceCli;
+
 
 
 public class Client {
@@ -21,9 +21,6 @@ public class Client {
             socketCliente = new Socket(host(), porta());
             output = new PrintWriter(socketCliente.getOutputStream(), true);
             input = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
-            System.out.println("=======================================\n"+
-                              "                STOPEEE!               \n"+
-                              "=======================================\n");
         }
         catch(Exception e){
             System.out.println(e.getMessage());
@@ -34,23 +31,23 @@ public class Client {
       try{
 
         while(!"exit".equalsIgnoreCase(line)){
-              output.println("ON");
-              // line = sc.nextLine();
-              // output.println(line);
-      				output.flush();
-              String answerServer = input.readLine();
+          //output.println("ON");
+          line = sc.nextLine();
+          output.println(line);
+  				output.flush();
 
-              if(answerServer == null)
-                System.out.println("Conexão com o server encerrada.");
+          String answerServer = input.readLine();
 
-              else System.out.println(answerServer);
-          }
+          if(answerServer == null)
+            System.out.println("Conexão com o server encerrada.");
+          else System.out.println(answerServer);
+        }
           sc.close();
         }
         catch(Exception e){
             System.out.println(e.getMessage());
         }
-    }
+      }
 
     private String host(){
         System.out.println("Diga o host: ");
@@ -63,6 +60,7 @@ public class Client {
         return "";
 
     }
+
 
     private int porta(){
 
