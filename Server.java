@@ -1,7 +1,5 @@
-
 import java.io.IOException;
 import java.net.ServerSocket;
-import stopjava.ServerThread;
 
 public class Server{
     

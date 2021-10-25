@@ -1,5 +1,3 @@
-package stopjava;
-
 import java.net.*;
 import java.io.*;
 
