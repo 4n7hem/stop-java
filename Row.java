@@ -1,3 +1,5 @@
+package stopjava;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +19,13 @@ public class Row {
     public Map<String, Integer> calcularFrequencia(){
         Map<String, Integer> resultado = new HashMap<String, Integer>();
         /*Esse método precisa contar a frequência de palavras repetidas no jogadorResposta */
+        
+            for (String seq : jogadorResposta.values()) {
+                Integer count = resultado.get(seq);
+                resultado.put(seq, count == null ? 1 : count + 1);
+            }
+
         return resultado;
-    }
+    }    
     
 }
