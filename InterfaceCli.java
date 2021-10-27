@@ -1,8 +1,7 @@
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
-import java.util.HashMap;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 public class InterfaceCli{
   public String openningGame(){
@@ -14,8 +13,17 @@ public class InterfaceCli{
     return text;
   }
 
-  public void rankingGame(HashMap rank){
+  public String rankingGame(HashMap<Socket, Integer> rank){
+    String ranking = "RANKING \n==================\n";
+    for (Socket player : rank.keySet()){
+      ranking += Integer.toString(player.getPort())+"..........."+
+      Integer.toString(rank.get(player))+"\n";
+    }
+    return ranking;
+  }
 
+  public String aLetra(char letraAtual){
+    return "A letra e: "+letraAtual+"\n";
   }
 
 }

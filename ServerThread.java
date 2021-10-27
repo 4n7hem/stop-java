@@ -4,19 +4,15 @@ import java.util.*;
 
 
 public class ServerThread extends TimerTask implements Runnable{
-    private Server a;
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
     private InterfaceCli Cli;
     private Socket newCli;
-    private boolean begin = false;
-    private boolean theFirst = false;
     private boolean once = false;
     private Server servidor;
 
     public ServerThread(Socket socket, Map conectList, Server servidor){
-        //super("ServerThread");
         this.servidor = servidor;
         this.Cli = new InterfaceCli();
         this.socket = socket;
@@ -35,18 +31,18 @@ public class ServerThread extends TimerTask implements Runnable{
 
     public void run(){
         try{
-          // out.println(Cli.openningGame());
-          // for (Socket port : servidor.getConnected().keySet())
-          //   if(port.getPort() != socket.getPort()) out.println(port.getPort());
-          while(true){
+          //while(true){
             String inputLine = "";
-            while(!inputLine.equalsIgnoreCase("exit")){
-              if(in.readLine() == null){
-                System.out.println("NULO");
-                begin = true;
+          //  while(!inputLine.equalsIgnoreCase("exit")){
+            out.println("resp");
+
+              if((inputLine = in.readLine()) == null){
+                inputLine = 
+                //begin = true;
               }
-            }
-          }
+               //aqui vai ter que ter uma segurada na thread para liberar o scanner do cliente.
+            //}
+          //}
         }
         catch(IOException e){
             e.printStackTrace();

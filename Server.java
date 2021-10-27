@@ -2,6 +2,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Server{
 
@@ -9,7 +10,11 @@ public class Server{
     private boolean escutando = true;
     private List<PrintStream> clientes;
     private Map<Socket, PrintStream> connected;
+    private ArrayList<ServerThread> servTreads;
     private InterfaceCli Cli;
+    private Timer timeIn;
+    private long timeInit = System.currentTimeMillis();
+    private long timeEnd;
 
     public Server(){
         try{
@@ -18,12 +23,21 @@ public class Server{
             servidor.setReuseAddress(true);
             System.out.println("Servidor iniciado na porta 8081.");
             connected = new LinkedHashMap<Socket, PrintStream>();
+            servTreads = new ArrayList<ServerThread>();
+            timeIn = new Timer();
             Cli = new InterfaceCli();
         }
         catch(Exception e){
             System.out.println("ERRO");
             System.out.println(e.getMessage());
         }
+    }
+
+    private void countingTime(){
+      for (ServerThread th : servTreads){
+        timeIn.schedule(th, 5*1000);
+      }
+
     }
 
     public Map<Socket, PrintStream> getConnected(){
@@ -42,6 +56,7 @@ public class Server{
       Socket client = servidor.accept();
       System.out.println("Novo cliente "+ client.getPort());
       ServerThread clientSock = new ServerThread(client, connected, this);
+      servTreads.add(clientSock);
       new Thread(clientSock).start();
       PrintStream ps = new PrintStream(client.getOutputStream());
       ps.println(Cli.openningGame());
@@ -51,20 +66,27 @@ public class Server{
       distribuiMensagem(Integer.toString(client.getPort()), null);
       connected.put(client, ps);
     }
-    long start = System.currentTimeMillis();;
     public void run(){
-
-
+      long wait = 0;
       try{
-        while(escutando){
+        while(escutando && connected.size() < 3){
+          //if(connected.size() == 2) timeInit = System.currentTimeMillis();
           joinPlayers();
-          long end;
-          if(connected.size() == 2) start = System.currentTimeMillis();
-          end = System.currentTimeMillis();
-          if((end - start)/60000 > 1 || connected.size() > 3){
-            distribuiMensagem("COMECOUU", null);
-          }
+          // System.out.println(connected.size());
+          // if(connected.size() >= 2 && connected.size() < 4){
+          //   timeEnd = System.currentTimeMillis();
+          //   wait = TimeUnit.MILLISECONDS.toSeconds(timeEnd - timeInit);
+          //   System.out.println(wait);
+          // }
+          // if(wait > 15){
+          //   distribuiMensagem("CABOUU", null);
+          //   escutando = !escutando;
+          //   break;
+          // }
+
         }
+        distribuiMensagem("Tem "+Integer.toString(connected.size())+" aqui.\n", null);
+        
       }
       catch(Exception e){
         e.printStackTrace();
@@ -83,8 +105,11 @@ public class Server{
 
   }
 
+
     public static void main(String[] args){
         Server servidor = new Server();
         servidor.run();
+
+
     }
   }

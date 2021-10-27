@@ -1,8 +1,6 @@
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
 
 
 public class Client {
@@ -14,16 +12,17 @@ public class Client {
     private InterfaceCli Cli;
     private Scanner sc = new Scanner(System.in);
     private String line = null;
+    private boolean resp = false;
 
     public Client(){
         try{
-            inputConfig= new BufferedReader(new InputStreamReader(System.in));
-            socketCliente = new Socket(host(), porta());
-            output = new PrintWriter(socketCliente.getOutputStream(), true);
-            input = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+          inputConfig= new BufferedReader(new InputStreamReader(System.in));
+          socketCliente = new Socket(host(), porta());
+          output = new PrintWriter(socketCliente.getOutputStream(), true);
+          input = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
         }
         catch(Exception e){
-            System.out.println(e.getMessage());
+          System.out.println(e.getMessage());
         }
     }
 
@@ -32,15 +31,18 @@ public class Client {
 
         while(!"exit".equalsIgnoreCase(line)){
           //output.println("ON");
-          line = sc.nextLine();
-          output.println(line);
   				output.flush();
 
           String answerServer = input.readLine();
-
           if(answerServer == null)
             System.out.println("Conexão com o server encerrada.");
-          else System.out.println(answerServer);
+          else {
+            if(answerServer.equals("resp")){
+              line = sc.nextLine();
+              output.println(line);
+            }
+            System.out.println(answerServer);
+          }
         }
           sc.close();
         }
