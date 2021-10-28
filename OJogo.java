@@ -2,7 +2,6 @@ import java.util.Random;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
-import stopjava.Row;
 
 public class OJogo {
 
@@ -48,19 +47,31 @@ public class OJogo {
     }
 
     public void calcularFrequencia(){
-       /* Com as frequencias de palavras de cada Row, passe pelo protocolo de pontos */
-        /* E adicione pontuações aos jogadores corretos em pontuação */
+        for(Row linha : palavrasAtuais){
+            Map<String, Integer> resultado = linha.calcularFrequencia();
+            for(String user : resultado.keySet()){
+                if(pontuacao.containsKey(user)){
+                    //a freq. de repeticoes deve passar pelo protocoloDePontos
+                    pontuacao.put(user, pontuacao.get(user) + protocoloDePontos(resultado.get(user)));
+                }else{
+                    pontuacao.put(user, protocoloDePontos(resultado.get(user)));
+                }
+            }
+        } 
     }
 
     public Integer protocoloDePontos(Integer entrada){
 
-        /* Se quiser rebalancear o jogo, troque os valores aqui. */
+        /* Retorna a pontuacao de acordo com a quantidade de repeticoes 
+        Se quiser rebalancear o jogo, troque os valores aqui. */
 
         if(entrada.equals(1)){return Integer.valueOf(25);}
         else if(entrada.equals(2)){return Integer.valueOf(15);}
         else if(entrada.equals(3)){return Integer.valueOf(10);}
         else return Integer.valueOf(5);
     }
+    
+    //Para reciclar o objeto do Jogo.
     
     public void limparRespostas(){
         this.palavrasAtuais.clear();
@@ -81,6 +92,10 @@ public class OJogo {
         /* Vamos passar quem venceu à camada acima, para que o server possa anunciar. */
         return "O vencedor foi: " + maxEntry.getKey();
     }
+
+    //Precisamos de um timer que marque um tempo em que as respostas são aceitadas.
+    //Quando o tempo acaba, o protocolo deve rejeitar as respostas.
+
 
     public void startTimer(){
         this.tempoInicial = System.currentTimeMillis();
