@@ -31,18 +31,21 @@ public class ServerThread extends TimerTask implements Runnable{
 
     public void run(){
         try{
-          //while(true){
+          while(true){
             String inputLine = "";
-          //  while(!inputLine.equalsIgnoreCase("exit")){
-            out.println("resp");
-
+            while(!inputLine.equalsIgnoreCase("exit")){
+            //out.println("resp");
+              if(servidor.escutando){
+                out.println("resp");
+              }
               if((inputLine = in.readLine()) == null){
-                inputLine = 
                 //begin = true;
               }
+              //System.out.println(inputLine);
                //aqui vai ter que ter uma segurada na thread para liberar o scanner do cliente.
-            //}
-          //}
+             }
+
+          }
         }
         catch(IOException e){
             e.printStackTrace();

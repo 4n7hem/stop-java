@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 public class Server{
 
     private ServerSocket servidor;
-    private boolean escutando = true;
+    public boolean escutando = false;
     private List<PrintStream> clientes;
     private Map<Socket, PrintStream> connected;
     private ArrayList<ServerThread> servTreads;
@@ -15,6 +15,7 @@ public class Server{
     private Timer timeIn;
     private long timeInit = System.currentTimeMillis();
     private long timeEnd;
+    private OJogo jogo;
 
     public Server(){
         try{
@@ -66,27 +67,20 @@ public class Server{
       distribuiMensagem(Integer.toString(client.getPort()), null);
       connected.put(client, ps);
     }
+
     public void run(){
       long wait = 0;
       try{
-        while(escutando && connected.size() < 3){
-          //if(connected.size() == 2) timeInit = System.currentTimeMillis();
+        while(connected.size() < 3){
           joinPlayers();
-          // System.out.println(connected.size());
-          // if(connected.size() >= 2 && connected.size() < 4){
-          //   timeEnd = System.currentTimeMillis();
-          //   wait = TimeUnit.MILLISECONDS.toSeconds(timeEnd - timeInit);
-          //   System.out.println(wait);
-          // }
-          // if(wait > 15){
-          //   distribuiMensagem("CABOUU", null);
-          //   escutando = !escutando;
-          //   break;
-          // }
-
         }
+
+        jogo = new OJogo();
         distribuiMensagem("Tem "+Integer.toString(connected.size())+" aqui.\n", null);
-        
+        distribuiMensagem("Digita algo:\n", null);
+        escutando = true;
+
+
       }
       catch(Exception e){
         e.printStackTrace();
@@ -108,6 +102,8 @@ public class Server{
 
     public static void main(String[] args){
         Server servidor = new Server();
+        // joinPlayers();
+        // distribuiMensagem("Digite o numero de jogadores:\n");
         servidor.run();
 
 

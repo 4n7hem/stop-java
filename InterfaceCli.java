@@ -8,6 +8,7 @@ public class InterfaceCli{
     String text = "=================================================\n"+
                   "                     STOPEEE!                    \n"+
                   "=================================================\n";
+    text+="Digite [E] em qualquer momento do jogo para sair.\n";
     text+="Aguardando pelo menos mais 2 jogadores...\n";
     text+= "Jogadores disponiveis:\n";
     return text;

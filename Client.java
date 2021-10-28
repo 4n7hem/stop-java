@@ -26,24 +26,45 @@ public class Client {
         }
     }
 
+    public void viewPlayers() throws IOException{
+      while(true){
+        String answerServer = input.readLine();
+        if(answerServer == null)
+          System.out.println("Conexão com o server encerrada.");
+        else {
+          if(answerServer.equals("resp")){
+            //System.out.println(answerServer);
+            line = sc.nextLine();
+            output.println(line);
+          }
+          System.out.println(answerServer);
+        }
+      }
+    }
+
+
     public void write(){
       try{
 
-        while(!"exit".equalsIgnoreCase(line)){
+
+        //
+         while(!"exit".equalsIgnoreCase(line)){
           //output.println("ON");
-  				output.flush();
+  				//output.flush();
 
           String answerServer = input.readLine();
           if(answerServer == null)
             System.out.println("Conexão com o server encerrada.");
           else {
             if(answerServer.equals("resp")){
+              //System.out.println(answerServer);
               line = sc.nextLine();
               output.println(line);
+
             }
             System.out.println(answerServer);
           }
-        }
+         }
           sc.close();
         }
         catch(Exception e){
@@ -77,6 +98,7 @@ public class Client {
     }
     public static void main(String[] args){
         Client cliente = new Client();
+        while(input.readLine() != null) System.out.println("A");
         cliente.write();
     }
 }
