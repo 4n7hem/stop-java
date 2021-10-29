@@ -1,25 +1,62 @@
 import java.util.Random;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
 
 public class OJogo {
 
+    public final String[] categorias = {"Nome", "Animal", "Cor", "Verbo", "Pais", "Objeto"};
     private char letraAtual;
     private Random r = new Random();
+    private boolean bateu;
+    private String userBateu;
+    private long tempoInicial;
     private HashMap<String, Integer> pontuacao = new HashMap<String,Integer>();
-    private HashMap<String, String> palavrasAtuais = new HashMap<String,String>();
+    public ArrayList<Row> palavrasAtuais = new ArrayList<Row>();
+    public ArrayList<Integer> ordemAl;
 
     public OJogo(){
         /* Eu sou imune a essa piada, mas que vocês sofram aí. */
         System.out.println("Que os jogos comecem.");
-
+        ordemAl = ordemAleat(categorias.length);
+        for(String categoria : categorias){
+            palavrasAtuais.add(new Row(categoria));
+        }
     }
 
+    public boolean getBateu(){
+      return bateu;
+    }
 
-    /* rola o d20 */
+    public String getUserBateu(){
+      return userBateu;
+    }
+
+    public void bateu(String user){
+      bateu = true;
+      userBateu = user;
+    }
+
+    public ArrayList<Integer> ordemAleat(int tamanho){
+      Random random = new Random();
+      ArrayList<Integer> arrayList = new ArrayList<Integer>();
+      while (arrayList.size() < tamanho) {
+        int a = random.nextInt(tamanho);
+        if (!arrayList.contains(a)) arrayList.add(a);
+      }
+      return arrayList;
+    }
+
+    /* rola o d26 */
 
     public void rerollLetra(){
-        this.letraAtual = (char) (r.nextInt(26) + 'a');
+        bateu = false;
+        char letraAnterior = this.letraAtual;
+        while(letraAnterior == this.letraAtual){
+            this.letraAtual = (char) (r.nextInt(26) + 'a');
+        }
     }
 
     /* O char da letra atual da rodada, para o servidor mandar aos clientes */
@@ -30,32 +67,27 @@ public class OJogo {
 
     /* O servidor adiciona as respostas de usuário que recebe */
 
-    public void addResposta(String user, String texto){
-        palavrasAtuais.put(user, texto);
+    public void addResposta(String user, String texto, String categoria){
+        for(Row linha : palavrasAtuais){
+            if(linha.nomeDaCategoria == categoria){
+                linha.inserirResposta(user, texto);
+                break;
+            }
+        }
     }
 
     public void calcularFrequencia(){
-        final Map<String, Integer> innerCounter = new HashMap<>(); /* isto conta frequência de palavras no palavraAtuais*/
-        for (String token : palavrasAtuais.keySet()) {             /* essa informação será passada ao protocolo abaixo */
-            if (innerCounter.containsKey(token)) {
-                int value = innerCounter.get(token);
-                innerCounter.put(token, ++value);
-            } else {
-                innerCounter.put(token, 1);
+        for(Row linha : palavrasAtuais){
+            Map<String, Integer> resultado = linha.calcularFrequencia();
+            for(String user : resultado.keySet()){
+                if(pontuacao.containsKey(user)){
+                    //a freq. de repeticoes deve passar pelo protocoloDePontos
+                    pontuacao.put(user, pontuacao.get(user) + protocoloDePontos(resultado.get(user)));
+                }else{
+                    pontuacao.put(user, protocoloDePontos(resultado.get(user)));
+                }
             }
         }
-
-        /* adicionar pontos no pontuação dado a frequência*/
-
-        for (String palavra : innerCounter.keySet()){
-           for(String nome : pontuacao.keySet()){
-               if( palavra == palavrasAtuais.get(nome)){
-                Integer pontAntiga = pontuacao.get(nome);
-                pontuacao.put(nome, Integer.sum(pontAntiga, protocoloDePontos(innerCounter.get(palavra))));
-               }
-           }
-        }
-
     }
 
     public Integer protocoloDePontos(Integer entrada){
@@ -67,5 +99,41 @@ public class OJogo {
         else if(entrada.equals(3)){return Integer.valueOf(10);}
         else return Integer.valueOf(5);
     }
-    
+
+    public void limparRespostas(){
+        this.palavrasAtuais.clear();
+    }
+
+    public String terminarOJogo(){
+
+        Map.Entry<String,Integer> maxEntry = null;
+
+        for(Map.Entry<String, Integer> entry : pontuacao.entrySet()){
+            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0){
+                maxEntry = entry;
+            }
+        }
+        this.limparRespostas();
+        this.pontuacao.clear();
+
+        /* Vamos passar quem venceu à camada acima, para que o server possa anunciar. */
+        return "O vencedor foi: " + maxEntry.getKey();
+    }
+
+    public void startTimer(){
+        this.tempoInicial = System.currentTimeMillis();
+    }
+
+    public long checarTimer(){
+        long deltaTempo = System.currentTimeMillis() - tempoInicial;
+        return deltaTempo;
+    }
+
+    public Map<String, Integer> getPontuacao(){
+        // Map<String, Integer> ranking = pontuacao.entrySet()
+        //           .stream()
+        //           .sorted() //Map.Entry.comparingByValue().reversed()
+        //           .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        return pontuacao;
+    }
 }
