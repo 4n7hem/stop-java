@@ -2,6 +2,8 @@ import java.util.Random;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
 
 public class OJogo {
 
@@ -106,6 +108,13 @@ public class OJogo {
         return deltaTempo;
     }
 
+    public Map<String, Integer> getPontuacao(){
+        Map<String, Integer> ranking = pontuacao.entrySet()
+                  .stream()
+                  .sorted() //Map.Entry.comparingByValue().reversed()
+                  .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        return ranking;
+    }
     
 }
 
