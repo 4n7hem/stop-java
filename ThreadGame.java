@@ -61,7 +61,7 @@ public class ThreadGame extends Thread {
             //System.out.println(s.nextLine());//coisas que estão vindo dos clientes
           }
           mensagem.println("ACABOU");
-          servidor.jogo.bateu(user);
+          if(!servidor.jogo.getBateu()) servidor.jogo.bateu(user);
 
           //wait = !wait;
           //mensagem.println("YESS agora e so aguardar...\n");

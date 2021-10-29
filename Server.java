@@ -55,7 +55,7 @@ public class Server {
       return this.connected;
     }
 
-    public void rodada(){
+    public void rodada(int n) throws InterruptedException{
       jogo.rerollLetra();
       distribuiMensagem(Cli.aLetra(jogo.getLetra(), n+1));
       Cli.contagemRegr(this);
@@ -80,7 +80,7 @@ public class Server {
         jogo = new OJogo();
         //qtd rodadas = qtd jogadores para teste
         for(int n = 0; n<this.connected.size(); n++){
-          rodada();
+          rodada(n);
         }
 
 
