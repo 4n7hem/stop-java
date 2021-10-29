@@ -28,12 +28,15 @@ public class Server {
         servidor = new ServerSocket(this.porta);
         System.out.println("Server ON");
 
-        while (this.connected.size() <2) {
+        //aceitando n jogadores para começar
+        while (this.connected.size() < 2) {
           System.out.println(this.connected.size());
           Socket client = servidor.accept();
           servidor.setReuseAddress(true);
           System.out.println("Nova conexao com " +
               Integer.toString(client.getPort()));
+
+          //mostra pros clientes quem está ON
           distribuiMensagem(Integer.toString(client.getPort())+"\n");
 
           PrintStream ps = new PrintStream(client.getOutputStream());
@@ -43,54 +46,44 @@ public class Server {
           ThreadGame tc = new ThreadGame(client.getInputStream(), this, client, ps);
           Thread T = new Thread(tc);
           this.TCli.put(tc, T);
-          //TCli.add(T);
           tc.start();
           this.connected.put(client, ps);
         }
-      //for(Thread t : TCli) t.interrupt();
     }
 
     public Map<Socket, PrintStream> getConnected(){
       return this.connected;
     }
 
+    public void rodada(){
+      jogo.rerollLetra();
+      distribuiMensagem(Cli.aLetra(jogo.getLetra(), n+1));
+      Cli.contagemRegr(this);
+      for(ThreadGame t : TCli.keySet()){
+        synchronized (t) {
+          t.wait = !t.wait; //false
+          t.notify();
+        }
+      }
+      while(!jogo.getBateu()){}
+
+      distribuiMensagem(jogo.getUserBateu()+" BATEU!\n");
+      //Thread.sleep(40000);
+      jogo.calcularFrequencia();
+      distribuiMensagem("Aqui vem o ranking");
+      distribuiMensagem(Cli.rankingGame(jogo.getPontuacao()));
+    }
+
     public void run() throws IOException {
       try{
         entraJogadores();
         jogo = new OJogo();
-        for(int n=0; n<this.connected.size(); n++){
-          jogo.rerollLetra();
-          distribuiMensagem(Cli.aLetra(jogo.getLetra(), n+1));
-          Cli.contagemRegr(this);
-          for(ThreadGame t : TCli.keySet()){
-            synchronized (t) {
-              t.wait = !t.wait; //false
-              t.notify();
-            }
-          }
-          while(!jogo.getBateu()){
-
-          }
-          distribuiMensagem(jogo.getUserBateu()+" BATEU!\n");
-          //Thread.sleep(40000);
-
-          System.out.println(jogo.getPontuacao());
-          for(Row r : jogo.palavrasAtuais){
-            System.out.println("CAT: "+ r.nomeDaCategoria);
-            for(String j : r.jogadorResposta.keySet())
-              System.out.println(r.jogadorResposta.get(j));
-          }
-          jogo.calcularFrequencia();
-          distribuiMensagem("Aqui vem o ranking");
-          distribuiMensagem(Cli.rankingGame(jogo.getPontuacao()));
+        //qtd rodadas = qtd jogadores para teste
+        for(int n = 0; n<this.connected.size(); n++){
+          rodada();
         }
 
 
-//     COMO FAZER O STOP?
-//    - botar no ThreadGame um while enquanto tiver respostas passar pelas categorias
-//    - printar na tela pelo distribuirMensagem e pegar pelo sc
-//    - jogar no objeto jogo do objeto servidor la dentro
-//    - aqui no serve vai ser o congelamento das threads depois do tempo
 
       }catch(Exception e){
         e.printStackTrace();

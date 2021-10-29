@@ -48,7 +48,7 @@ public class InterfaceCli{
             serv.distribuiMensagem("    - "+Integer.toString(setInterval())+" -");
         }
     }, 1000, 1000);
-    Thread.sleep(6000);
+    Thread.sleep(4000);
     serv.distribuiMensagem("  == JA! ==");
   }
 
