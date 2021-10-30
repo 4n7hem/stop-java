@@ -17,7 +17,7 @@ public class InterfaceCli{
   }
 
   public String rankingGame(Map<String, Integer> rank){
-    String ranking = "RANKING DA RODADA \n==================\n";
+    String ranking = " RANKING DA RODADA \n====================\n";
     for (String player : rank.keySet()){
       ranking += player+"..........."+
       Integer.toString(rank.get(player))+"\n";
@@ -50,6 +50,23 @@ public class InterfaceCli{
     }, 1000, 1000);
     Thread.sleep(4000);
     serv.distribuiMensagem("  == JA! ==");
+  }
+
+  public String fimRodada(String user){
+    String text = "\n"+user+" disse STOPEEE!\n";
+    text += "\n=== FIIIIM DE RODADA ===\n\n";
+    return text;
+  }
+
+  public String rankingFinal(Map<String, Integer> rank, String user){
+    String ranking = "\n=== FIIIM DE JOOOGO! ===\n";
+    ranking += "O vencedor e: "+user+"!!!\n";
+    ranking += "      RANKING FINAL \n====================\n";
+    for (String player : rank.keySet()){
+      ranking += player+"..........."+
+      Integer.toString(rank.get(player))+"\n";
+    }
+    return ranking;
   }
 
 }

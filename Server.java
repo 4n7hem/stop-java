@@ -69,22 +69,24 @@ public class Server {
         Thread.sleep(500);
       }
 
-      distribuiMensagem(jogo.getUserBateu()+" BATEU!\n");
-      
+      distribuiMensagem(Cli.fimRodada(jogo.getUserBateu()));
+      Thread.sleep(2000);
       jogo.calcularFrequencia();
-      distribuiMensagem("Aqui vem o ranking");
+
       distribuiMensagem(Cli.rankingGame(jogo.getPontuacao()));
+      Thread.sleep(3000);
     }
 
     public void run() throws IOException {
       try{
         entraJogadores();
         jogo = new OJogo();
-        //qtd rodadas = qtd jogadores para teste
-        for(int n = 0; n<this.connected.size(); n++){
-          rodada(n);
-        }
 
+        //qtd rodadas = qtd jogadores para teste
+        for(int n = 0; n<this.connected.size(); n++) rodada(n);
+        
+        //fim de jogo
+        
 
 
       }catch(Exception e){

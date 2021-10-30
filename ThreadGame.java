@@ -8,14 +8,12 @@ import java.util.TimerTask;
 
 public class ThreadGame extends Thread {
 
-    private InterfaceCli Cli = new InterfaceCli();
     private InputStream cliente;
     private Server servidor;
     private Socket socket;
     private PrintStream mensagem;
     private String user;
     public boolean wait = true;
-    private long init;
     public boolean bateu;
 
 
@@ -26,16 +24,13 @@ public class ThreadGame extends Thread {
         this.mensagem = printaCli;
     }
 
-
     public void run() {
       try{
-        init = System.currentTimeMillis();
         user = Integer.toString(socket.getPort());
         this.cliente.skip(this.cliente.available());
         Scanner s = new Scanner(this.cliente);
         String command = "";
 
-        //s.hasNextLine()
         while(!command.equals("SAIR")){
           wait = true;
           bateu = false;
@@ -48,7 +43,6 @@ public class ThreadGame extends Thread {
               }
             }
           }
-
           for (Integer i : servidor.jogo.ordemAl){
             if (servidor.jogo.getBateu()) break;
             mensagem.println("\n"+servidor.jogo.categorias[i.intValue()]+":");
@@ -56,9 +50,7 @@ public class ThreadGame extends Thread {
             if(command.equals("SAIR")) break;
             servidor.jogo.addResposta(user, command,
               servidor.jogo.categorias[i.intValue()]);
-            //System.out.println(s.nextLine());//coisas que estão vindo dos clientes
           }
-          mensagem.println("ACABOU");
           if(!servidor.jogo.getBateu()) servidor.jogo.bateu(user);
         }
         s.close();
