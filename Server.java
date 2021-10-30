@@ -5,6 +5,7 @@ import java.lang.*;
 
 
 public class Server {
+
     private Map<Socket, PrintStream> connected;
     private InterfaceCli Cli = new InterfaceCli();
     private Map<ThreadGame, Thread> TCli;
@@ -80,7 +81,15 @@ public class Server {
     public void run() throws IOException {
       try{
         entraJogadores();
+<<<<<<< HEAD
         jogo = new OJogo();
+=======
+        jogo = new OJogo(this.connected);
+        //qtd rodadas = qtd jogadores para teste
+        for(int n = 0; n<this.connected.size(); n++){
+          rodada(n);
+        }
+>>>>>>> 1ab211fcb485786db5e930bc55a7ded91a9a0326
 
         //qtd rodadas = qtd jogadores para teste
         for(int n = 0; n<this.connected.size(); n++) rodada(n);

@@ -1,13 +1,12 @@
-import java.util.Random;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-import java.util.LinkedHashMap;
+import java.util.*;
+import java.net.*;
+import java.io.*;
+import java.lang.*;
 
 public class OJogo {
 
     public final String[] categorias = {"Nome", "Animal", "Cor", "Verbo", "Pais", "Objeto"};
+    private Map<Socket, PrintStream> listaDeUsuarios;
     private char letraAtual;
     private Random r = new Random();
     private boolean bateu;
@@ -17,10 +16,14 @@ public class OJogo {
     public ArrayList<Row> palavrasAtuais = new ArrayList<Row>();
     public ArrayList<Integer> ordemAl;
 
-    public OJogo(){
+    public OJogo(Map<Socket, PrintStream> connected){
         /* Eu sou imune a essa piada, mas que vocês sofram aí. */
         System.out.println("Que os jogos comecem.");
         ordemAl = ordemAleat(categorias.length);
+        this.listaDeUsuarios = connected;
+        for(Socket jogador : listaDeUsuarios.keySet()){
+                pontuacao.put(String.valueOf(jogador.getPort()), 0);
+            }
         for(String categoria : categorias){
             palavrasAtuais.add(new Row(categoria));
         }
@@ -35,7 +38,7 @@ public class OJogo {
     }
 
     public void bateu(String user){
-      bateu = true;
+      this.bateu = true;
       userBateu = user;
     }
 
@@ -83,10 +86,11 @@ public class OJogo {
                 if(pontuacao.containsKey(user)){
                     //a freq. de repeticoes deve passar pelo protocoloDePontos
                     pontuacao.put(user, pontuacao.get(user) + protocoloDePontos(resultado.get(user)));
-                }else{
+                } 
+                else{
                     pontuacao.put(user, protocoloDePontos(resultado.get(user)));
-                }
-            }
+                }               
+            }            
         }
     }
 
