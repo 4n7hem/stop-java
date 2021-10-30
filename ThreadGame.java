@@ -51,7 +51,7 @@ public class ThreadGame extends Thread {
 
           for (Integer i : servidor.jogo.ordemAl){
             if (servidor.jogo.getBateu()) break;
-            mensagem.println(servidor.jogo.categorias[i.intValue()]+":\n");
+            mensagem.println("\n"+servidor.jogo.categorias[i.intValue()]+":");
             command = s.nextLine();
             if(command.equals("SAIR")) break;
             servidor.jogo.addResposta(user, command,

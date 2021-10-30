@@ -66,11 +66,11 @@ public class Server {
         }
       }
       while(!jogo.getBateu()){
-        
+        Thread.sleep(500);
       }
 
       distribuiMensagem(jogo.getUserBateu()+" BATEU!\n");
-      //Thread.sleep(40000);
+      
       jogo.calcularFrequencia();
       distribuiMensagem("Aqui vem o ranking");
       distribuiMensagem(Cli.rankingGame(jogo.getPontuacao()));
