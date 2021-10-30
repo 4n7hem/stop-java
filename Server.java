@@ -65,7 +65,9 @@ public class Server {
           t.notify();
         }
       }
-      while(!jogo.getBateu()){}
+      while(!jogo.getBateu()){
+        
+      }
 
       distribuiMensagem(jogo.getUserBateu()+" BATEU!\n");
       //Thread.sleep(40000);

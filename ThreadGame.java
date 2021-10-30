@@ -31,8 +31,6 @@ public class ThreadGame extends Thread {
       try{
         init = System.currentTimeMillis();
         user = Integer.toString(socket.getPort());
-        //Cli.contagemRegr(servidor);
-        //Thread.sleep(6000);
         this.cliente.skip(this.cliente.available());
         Scanner s = new Scanner(this.cliente);
         String command = "";
@@ -62,10 +60,6 @@ public class ThreadGame extends Thread {
           }
           mensagem.println("ACABOU");
           if(!servidor.jogo.getBateu()) servidor.jogo.bateu(user);
-
-          //wait = !wait;
-          //mensagem.println("YESS agora e so aguardar...\n");
-          //System.exit(0);
         }
         s.close();
         if(servidor == null){
