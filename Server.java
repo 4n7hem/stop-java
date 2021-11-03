@@ -7,7 +7,8 @@ public class Server {
 
     private Map<Socket, PrintStream> connected;
     private InterfaceCli Cli = new InterfaceCli();
-    private Map<ThreadGame, Thread> TCli;
+    private ArrayList<ThreadGame> TCli;
+    private ArrayList<Thread> ThreadsCli;
     private ServerSocket servidor;
     private int porta;
     private int qtdjogadores;
@@ -15,13 +16,12 @@ public class Server {
     public OJogo jogo;
 
     public static void main(String[] args) throws IOException {
-        // inicia o servidor com quantidade de jogadores e de rodadas
+        //inicia o servidor com quantidade de jogadores e de rodadas
         try{
-          new Server(8081, 2, 3).run();
+          new Server(8081, 3, 3).run();
         }catch(Exception e){
           e.printStackTrace();
         }
-        
     }
 
     public Server (int porta, int nplayers, int nrounds) {
@@ -29,7 +29,8 @@ public class Server {
         this.qtdrodadas = nrounds;
         this.porta = porta;
         this.connected = new LinkedHashMap<Socket, PrintStream>();
-        this.TCli = new HashMap<ThreadGame, Thread>();
+        this.TCli = new ArrayList<ThreadGame>();
+        this.ThreadsCli = new ArrayList<Thread>();
     }
 
     public void entraJogadores()throws Exception{
@@ -53,7 +54,7 @@ public class Server {
         for (Socket sock : connected.keySet())
           ps.println(Integer.toString(sock.getPort())+"\n");
         ThreadGame tc = new ThreadGame(client.getInputStream(), this, client, ps);
-        this.TCli.put(tc, null);
+        this.TCli.add(tc);
         this.connected.put(client, ps);
       }
     }
@@ -91,16 +92,18 @@ public class Server {
       Cli.contagemRegr(this);
 
       //starta as threads que preenchem a rodada
-      for(ThreadGame t : TCli.keySet()){      
-        this.TCli.put(t, new Thread(t));
-        TCli.get(t).start();
+      for(ThreadGame t : TCli){  
+        Thread th = new Thread(t);
+        this.ThreadsCli.add(th);
+        th.start();
       }
       //enquanto ninguem bateu STOP nas threads, segura o server
       while(!jogo.getBateu()) Thread.sleep(500);
 
       try {
         //interrupção das threads após alguem bater STOP
-        for(ThreadGame t : TCli.keySet()) TCli.get(t).interrupt();
+        for(Thread t : ThreadsCli) t.stop();
+        ThreadsCli.clear();
       } catch (Exception ex) {
           ex.printStackTrace();
       } 

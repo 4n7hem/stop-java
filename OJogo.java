@@ -29,7 +29,7 @@ public class OJogo {
         }
     }
 
-    public boolean getBateu(){
+    public synchronized boolean getBateu(){
       return bateu;
     }
 
@@ -87,10 +87,6 @@ public class OJogo {
         //linha = 1 cat por loop
         
         for(Row linha : palavrasAtuais){
-            System.out.println("CAT: "+linha.nomeDaCategoria);
-            for(String cat : linha.jogadorResposta.keySet()){
-                System.out.println("USER: "+cat+" RESP: "+linha.jogadorResposta.get(cat));
-            }
             Map<String, Integer> resultado = linha.calcularFrequencia();
             for(String user : resultado.keySet()){
                 if(pontuacao.containsKey(user)){

@@ -27,29 +27,36 @@ public class ThreadGame extends Thread {
       try{
         user = Integer.toString(socket.getPort());
         Scanner s = new Scanner(this.cliente);
+        boolean stop = false;
 
-        //enquanto a pessoa não pedir para sair durante uma rodada o codigo segue fluido
-        while(!command.equals("SAIR")){
-          //limpa quaisquer entradas anteriores ao incio da rodada
-          this.cliente.skip(this.cliente.available());
-          
-          Object[] suporte = servidor.jogo.ordemAl.toArray();
-          for  (int i = 0; i < suporte.length; i++){
-            Integer n = (Integer) suporte[i];
-            mensagem.println("\n"+servidor.jogo.categorias[n.intValue()]+":");
+        //limpa quaisquer entradas anteriores ao incio da rodada
+        this.cliente.skip(this.cliente.available());
+        Object[] suporte = servidor.jogo.ordemAl.toArray();
+        for  (int i = 0; i < suporte.length; i++){
+          if (servidor.jogo.getBateu()) break;
+          Integer n = (Integer) suporte[i];
+          mensagem.println("\n"+servidor.jogo.categorias[n.intValue()]+":");
+          try {
+            while(!s.hasNextLine()) stop = servidor.jogo.getBateu();
+            if(stop) break;
             command = s.nextLine();
-            if (servidor.jogo.getBateu() || command.equals("SAIR")) break;
-            servidor.jogo.addResposta(user, command,
-              servidor.jogo.categorias[n.intValue()]);
+          } catch (NoSuchElementException e) {
+            System.out.println("Cliente "+user+" desconectado.");
+          }
+          
+          if (servidor.jogo.getBateu() || command.equals("SAIR")) break;
+          servidor.jogo.addResposta(user, command,
+            servidor.jogo.categorias[n.intValue()]);
           }
           //se a pessoa terminou o loop for, indica que passou por todos as categorias, então ela bateu
           if(!servidor.jogo.getBateu() && !command.equals("SAIR")) servidor.jogo.bateu(user);
-          if(servidor.jogo.getBateu()) break;
-        }
+          
+        //}
         
         if(servidor == null){
           socket.close();
         }
+        return;
       }
       catch(Exception e){
         e.printStackTrace();
