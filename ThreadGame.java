@@ -13,8 +13,7 @@ public class ThreadGame extends Thread {
     private Socket socket;
     private PrintStream mensagem;
     private String user;
-    public boolean wait = true;
-    public boolean bateu;
+    private String command = "";
 
 
     public ThreadGame(InputStream cliente, Server servidor, Socket socket, PrintStream printaCli) {
@@ -27,33 +26,27 @@ public class ThreadGame extends Thread {
     public void run() {
       try{
         user = Integer.toString(socket.getPort());
-        this.cliente.skip(this.cliente.available());
         Scanner s = new Scanner(this.cliente);
-        String command = "";
 
+        //enquanto a pessoa não pedir para sair durante uma rodada o codigo segue fluido
         while(!command.equals("SAIR")){
-          wait = true;
-          bateu = false;
-          synchronized (this) {
-            while (wait) {
-              try {
-                  wait();
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
-          }
-          for (Integer i : servidor.jogo.ordemAl){
-            if (servidor.jogo.getBateu()) break;
-            mensagem.println("\n"+servidor.jogo.categorias[i.intValue()]+":");
+          //limpa quaisquer entradas anteriores ao incio da rodada
+          this.cliente.skip(this.cliente.available());
+          
+          Object[] suporte = servidor.jogo.ordemAl.toArray();
+          for  (int i = 0; i < suporte.length; i++){
+            Integer n = (Integer) suporte[i];
+            mensagem.println("\n"+servidor.jogo.categorias[n.intValue()]+":");
             command = s.nextLine();
-            if(command.equals("SAIR")) break;
+            if (servidor.jogo.getBateu() || command.equals("SAIR")) break;
             servidor.jogo.addResposta(user, command,
-              servidor.jogo.categorias[i.intValue()]);
+              servidor.jogo.categorias[n.intValue()]);
           }
-          if(!servidor.jogo.getBateu()) servidor.jogo.bateu(user);
+          //se a pessoa terminou o loop for, indica que passou por todos as categorias, então ela bateu
+          if(!servidor.jogo.getBateu() && !command.equals("SAIR")) servidor.jogo.bateu(user);
+          if(servidor.jogo.getBateu()) break;
         }
-        s.close();
+        
         if(servidor == null){
           socket.close();
         }
@@ -63,11 +56,13 @@ public class ThreadGame extends Thread {
       }
       finally {
 				try {
-          System.out.println("Conexao com "+user+" encerrada.");
-          servidor.distribuiMensagem(user+" saiu.");
-          servidor.getConnected().remove(this.socket);
-					socket.close();
-
+          if(command.equals("SAIR")){
+            System.out.println("Conexao com "+user+" encerrada.");
+            servidor.distribuiMensagem(user+" saiu.");
+            servidor.getConnected().remove(this.socket);
+            socket.close();
+          } 
+          
 				}
 				catch (IOException e) {
 					e.printStackTrace();

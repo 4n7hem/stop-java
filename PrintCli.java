@@ -1,7 +1,5 @@
 import java.util.*;
-import java.net.*;
 import java.io.*;
-import java.lang.*;
 
 public class PrintCli implements Runnable {
 

@@ -6,7 +6,7 @@ import java.lang.*;
 public class OJogo {
 
     public final String[] categorias = {"Nome", "Animal", "Cor", "Verbo", "Pais", "Objeto"};
-    private Map<Socket, PrintStream> listaDeUsuarios;
+    private Set<Socket> listaDeUsuarios;
     private char letraAtual;
     private Random r = new Random();
     private boolean bateu;
@@ -16,12 +16,12 @@ public class OJogo {
     public ArrayList<Row> palavrasAtuais = new ArrayList<Row>();
     public ArrayList<Integer> ordemAl;
 
-    public OJogo(Map<Socket, PrintStream> connected){
+    public OJogo(Set<Socket> connected){
         /* Eu sou imune a essa piada, mas que vocês sofram aí. */
         System.out.println("Que os jogos comecem.");
-        ordemAl = ordemAleat(categorias.length);
+        ordemAl = ordemAleat();
         this.listaDeUsuarios = connected;
-        for(Socket jogador : listaDeUsuarios.keySet()){
+        for(Socket jogador : listaDeUsuarios){
                 pontuacao.put(String.valueOf(jogador.getPort()), 0);
             }
         for(String categoria : categorias){
@@ -42,11 +42,15 @@ public class OJogo {
       userBateu = user;
     }
 
-    public ArrayList<Integer> ordemAleat(int tamanho){
+    public void rearranjo(){
+        ordemAl = ordemAleat();
+    }
+
+    public ArrayList<Integer> ordemAleat(){
       Random random = new Random();
       ArrayList<Integer> arrayList = new ArrayList<Integer>();
-      while (arrayList.size() < tamanho) {
-        int a = random.nextInt(tamanho);
+      while (arrayList.size() < this.categorias.length) {
+        int a = random.nextInt(this.categorias.length);
         if (!arrayList.contains(a)) arrayList.add(a);
       }
       return arrayList;
@@ -80,7 +84,13 @@ public class OJogo {
     }
 
     public void calcularFrequencia(){
+        //linha = 1 cat por loop
+        
         for(Row linha : palavrasAtuais){
+            System.out.println("CAT: "+linha.nomeDaCategoria);
+            for(String cat : linha.jogadorResposta.keySet()){
+                System.out.println("USER: "+cat+" RESP: "+linha.jogadorResposta.get(cat));
+            }
             Map<String, Integer> resultado = linha.calcularFrequencia();
             for(String user : resultado.keySet()){
                 if(pontuacao.containsKey(user)){
@@ -90,7 +100,8 @@ public class OJogo {
                 else{
                     pontuacao.put(user, protocoloDePontos(resultado.get(user)));
                 }               
-            }            
+            }
+            linha.limpar();          
         }
     }
 
@@ -121,7 +132,7 @@ public class OJogo {
         this.pontuacao.clear();
 
         /* Vamos passar quem venceu à camada acima, para que o server possa anunciar. */
-        return "O vencedor foi: " + maxEntry.getKey();
+        return maxEntry.getKey();
     }
 
     public void startTimer(){
@@ -133,11 +144,7 @@ public class OJogo {
         return deltaTempo;
     }
 
-    public Map<String, Integer> getPontuacao(){
-        // Map<String, Integer> ranking = pontuacao.entrySet()
-        //           .stream()
-        //           .sorted() //Map.Entry.comparingByValue().reversed()
-        //           .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+    public HashMap<String, Integer> getPontuacao(){
         return pontuacao;
     }
 }

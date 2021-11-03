@@ -1,17 +1,14 @@
-
-import java.io.*;
-import java.net.*;
 import java.util.*;
 
 public class InterfaceCli{
   private static Timer timer;
   private static int interval;
-  public String openningGame(){
+  public String openningGame(int qtd){
     String text = "=================================================\n"+
                   "                     STOPEEE!                    \n"+
                   "=================================================\n";
     text+="Digite [SAIR] em qualquer momento do jogo para sair.\n";
-    text+="Aguardando pelo menos mais 2 jogadores...\n";
+    text+="Aguardando mais "+(qtd-1)+" jogadores...\n";
     text+= "Jogadores disponiveis:\n";
     return text;
   }
@@ -23,10 +20,6 @@ public class InterfaceCli{
       Integer.toString(rank.get(player))+"\n";
     }
     return ranking;
-  }
-
-  public String finalRank(HashMap<Socket, Integer> rank){
-    return "";
   }
 
   public String aLetra(char letraAtual, int n){
@@ -58,15 +51,23 @@ public class InterfaceCli{
     return text;
   }
 
-  public String rankingFinal(Map<String, Integer> rank, String user){
-    String ranking = "\n=== FIIIM DE JOOOGO! ===\n";
+  public String Final(String user){
+    String ranking = "\n=== FIIIM DE JOOOGO! ===\n\n";
     ranking += "O vencedor e: "+user+"!!!\n";
-    ranking += "      RANKING FINAL \n====================\n";
-    for (String player : rank.keySet()){
-      ranking += player+"..........."+
-      Integer.toString(rank.get(player))+"\n";
-    }
     return ranking;
+  }
+
+  public void clapClap(Server serv)throws InterruptedException{
+    timer = new Timer();
+    interval = 5;
+    timer.schedule(new TimerTask() {
+        public void run() {
+            serv.distribuiMensagem("      - CLAP -");
+            setInterval();
+        }
+    }, 1000, 1000);
+    Thread.sleep(6000);
+    serv.distribuiMensagem("\n\n== OBRIGADE POR JOGAREM :) ==");
   }
 
 }

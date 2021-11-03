@@ -19,7 +19,7 @@ public class Row {
         int count = 0;
         for(Map.Entry<String, String> entry : jogadorResposta.entrySet()){
             //o lowercase é para filtrar palavras iguais mas com caracteres diferentes
-            if(entry.getValue().equals(palavra.toLowerCase())){
+            if(entry.getValue().equalsIgnoreCase(palavra)){
                 count++;
             }
         }
@@ -39,5 +39,9 @@ public class Row {
         //o retorno é passado de volta ao Jogo.
         return resultado;
     }    
+
+    public void limpar(){
+        this.jogadorResposta.clear();
+    }
     
 }

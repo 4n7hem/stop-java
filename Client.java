@@ -2,10 +2,7 @@ import java.util.*;
 import java.net.*;
 import java.io.*;
 
-
-
 public class Client {
-    private InterfaceCli Cli = new InterfaceCli();
     public static void main(String[] args)throws UnknownHostException, IOException {
         // dispara cliente
         new Client("localhost", 8081).executa();
@@ -20,9 +17,9 @@ public class Client {
         this.host = host;
         this.porta = porta;
         cliente = new Socket(this.host, this.porta);
-        System.out.println(Cli.openningGame());
       }catch(Exception e){
-        e.printStackTrace();
+        System.out.println("=== OPA! ===");
+        System.out.println("Desculpe, nao temos jogos por agora. :(");
       }
     }
 
@@ -32,7 +29,7 @@ public class Client {
         PrintCli r = new PrintCli(cliente.getInputStream());
         new Thread(r).start();
 
-        // lê msgs do teclado e manda pro servidor
+        // recebendo entradas do cliente
         Scanner sc = new Scanner(System.in);
         PrintStream saida = new PrintStream(cliente.getOutputStream());
         while (sc.hasNextLine()) {
@@ -43,7 +40,6 @@ public class Client {
         sc.close();
         cliente.close();
       }catch(Exception e){
-            System.out.println(e.getMessage());
       }
     }
 }
